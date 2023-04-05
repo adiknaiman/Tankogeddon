@@ -72,3 +72,5 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+Tankogeddon/Content/CSC/Demo/Particles/Texrures/T_LandUnderWater_baseColor.uasset
+Tankogeddon/Content/CSC/Demo/Particles/Texrures/T_LandUnderWater_normal.uasset
