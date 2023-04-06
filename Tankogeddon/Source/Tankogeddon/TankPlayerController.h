@@ -19,12 +19,18 @@ public:
 	class ATankPawn* TankPawn;
 
 	virtual void SetupInputComponent() override;
+	virtual void Tick(float DeltaSeconds) override;
+	FVector GetMousePosition() { return MousePos; }
 
 protected:
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
-
 	void MoveRight(float Value);
+	void RotateRight(float Value);
+	void Fire();
+	void FireSpecial();
+
+	FVector MousePos;
 
 };
