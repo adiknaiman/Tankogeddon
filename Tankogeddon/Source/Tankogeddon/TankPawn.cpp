@@ -129,6 +129,7 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> newCannonClass)
 		Cannon->Destroy();
 	}
 
+	EquippedCannonClass = newCannonClass;
 	FActorSpawnParameters spawnParams;
 	spawnParams.Instigator = this;
 	spawnParams.Owner = this;
@@ -141,5 +142,16 @@ void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	TankController = Cast<ATankPlayerController>(GetController());
-	SetupCannon(CannonClass);
+	SetupCannon(EquippedCannonClass);
+}
+
+void ATankPawn::ChangeCannon()
+{
+	TSubclassOf<ACannon> CachedCannon;
+	CachedCannon = EquippedCannonClass;
+	EquippedCannonClass = SecondCannonClass;
+	SecondCannonClass = CachedCannon;
+	
+	SetupCannon(EquippedCannonClass);
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Cannon changed")));
 }

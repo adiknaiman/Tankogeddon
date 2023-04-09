@@ -23,26 +23,29 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UStaticMeshComponent* CannonMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	class UArrowComponent* ProjectileSpawnPoint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	ECannonType CannonType = ECannonType::FireProjectile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
+	TSubclassOf<class AProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	float FireRate = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	float FireRange = 1000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire params")
 	float Damage = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Missile")
-	int32 Missile = 10;
+	int32 Missile = 20;
 
 	bool bReadyToFire = true;
 	FTimerHandle ReloadTimer;
