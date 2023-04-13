@@ -28,7 +28,7 @@ protected:
 		float MoveRate = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-		float Damage = 1.0f;
+		float Damage = 3.0f;
 
 	FTimerHandle MovementTimer;
 

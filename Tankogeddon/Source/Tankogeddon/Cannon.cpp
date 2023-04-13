@@ -3,11 +3,12 @@
 #include "Components/ArrowComponent.h"
 #include "TimerManager.h"
 #include "Projectile.h"
+#include "DamageTaker.h"
 
 
 ACannon::ACannon()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	USceneComponent* SceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
 	RootComponent = SceneComp;
@@ -17,6 +18,14 @@ ACannon::ACannon()
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow Component"));
 	ProjectileSpawnPoint->SetupAttachment(CannonMesh);
+}
+
+void ACannon::BeginPlay()
+{
+	Super::BeginPlay();
+	bReadyToFire = true;
+	Reload();
+
 }
 
 void ACannon::Fire()
@@ -30,7 +39,9 @@ void ACannon::Fire()
 	if (CannonType == ECannonType::FireProjectile)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Fire - projectile");
-		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+		FActorSpawnParameters spawnParams;
+		spawnParams.Owner = this;
+		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation(), spawnParams);
 		if (Projectile)
 		{
 			Projectile->Start();
@@ -50,11 +61,12 @@ void ACannon::Fire()
 		if (GetWorld()->LineTraceSingleByChannel(hitResult, Start, End, ECollisionChannel::ECC_Visibility, traceParams))
 		{
 			DrawDebugLine(GetWorld(), Start, hitResult.Location, FColor::Red, false, 1.0f, 0, 5);
+		
+			UE_LOG(LogTemp, Warning, TEXT("Owner %s"), GetOwner());
 			if (hitResult.GetActor())
 			{
-				AActor* OverlappedActor = hitResult.GetActor();
 				UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *hitResult.GetActor()->GetName());
-				OverlappedActor->Destroy();
+				hitResult.GetActor();
 			}
 		}
 		else
@@ -94,12 +106,6 @@ void ACannon::Reload()
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Missiles: %d"), Missile));
 }
 
-void ACannon::BeginPlay()
-{
-	Super::BeginPlay();
-	bReadyToFire = true;
-	Reload();
-	
-}
+
 
 

@@ -9,6 +9,7 @@
 #include "TankPlayerController.h"
 #include <Kismet/KismetMathLibrary.h>
 #include "Components/ArrowComponent.h"
+#include "HealthComponent.h"
 
 
 
@@ -37,6 +38,10 @@ inline ATankPawn::ATankPawn()
 
 	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("CannonSetupPoint"));
 	CannonSetupPoint->SetupAttachment(TurretMesh);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent->OnHealthChanged.AddUObject(this, &ATankPawn::DamageTaken);
+	HealthComponent->OnDie.AddUObject(this, &ATankPawn::Die);
 }
 
 void ATankPawn::Tick(float DeltaTime)
@@ -154,4 +159,23 @@ void ATankPawn::ChangeCannon()
 	
 	SetupCannon(EquippedCannonClass);
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Cannon changed")));
+}
+
+void ATankPawn::TakeDamage(FDamageData DamageData)
+{
+	HealthComponent->TakeDamage(DamageData);
+}
+
+void ATankPawn::DamageTaken(float Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Health: %f"), HealthComponent->GetHealth());
+}
+
+void ATankPawn::Die()
+{
+	if (Cannon)
+	{
+		Cannon->Destroy();
+	}
+	Destroy();
 }

@@ -3,6 +3,8 @@
 
 #include "Projectile.h"
 #include "Components/StaticMeshComponent.h"
+#include "DamageTaker.h"
+#include "GameStruct.h"
 
 AProjectile::AProjectile()
 {
@@ -30,11 +32,27 @@ void AProjectile::Move()
 
 void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (OtherActor) {
+	AActor* owner = GetOwner();
+	AActor* OwnerByOwner = owner != nullptr ? owner->GetOwner() : nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("Owner %s"), GetOwner());
+	if (OtherActor != owner || OtherActor != OwnerByOwner)
+	{
+		IDamageTaker* DamageActor = Cast<IDamageTaker>(OtherActor);
+		if (DamageActor)
+		{
+			FDamageData damageData;
+			damageData.DamageValue = Damage;
+			damageData.Instigator = owner;
+			damageData.DamageMaker = this;
 
-        UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-        OtherActor->Destroy();
-        //Destroy();
-    }
+			DamageActor->TakeDamage(damageData);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+			OtherActor->Destroy();
+		}
+		Destroy();
+	}
 }
 
